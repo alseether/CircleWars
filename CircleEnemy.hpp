@@ -1,5 +1,5 @@
-#ifndef CIRCLEPLAYER_HPP
-#define CIRCLEPLAYER_HPP
+#ifndef CIRCLEENEMY_HPP
+#define CIRCLEENEMY_HPP
 
 #include "Circle.hpp"
 #include "Circumference.hpp"
@@ -7,13 +7,37 @@
 
 //#define DEBUG
 
-class CirclePlayer : public Circle{
+class CircleEnemy : public Circle{
 public:
-	CirclePlayer(sf::Vector2f pos) : 
-		Circle(pos, 50, 270, 90, sf::Color::Green)
+	CircleEnemy(sf::Vector2f pos) : 
+		Circle(pos, 25, 180, 90, sf::Color::Red)
 	{
 		this->outterCirc = new Circumference(this->pos, this->radius + 3);
 		this->innerCirc = new Circumference(this->pos, this->radius - 3);
+	}
+
+	void trackPlayer(sf::Vector2f playerPos){
+		if (this->pos.x <= playerPos.x){
+			if (this->pos.y <= playerPos.y){
+				// This Enemy circle is on the upper-left side of the player
+				this->facing = 315;
+			}
+			else{
+				// This Enemy circle is on the bottom-left side of the player
+				this->facing = 45;
+			}
+		}
+		else{
+			if (this->pos.y <= playerPos.y){
+				// This Enemy circle is on the upper-right side of the player
+				this->facing = 225;
+			}
+			else{
+				// This Enemy circle is on the bottom-right side of the player
+				this->facing = 135;
+			}
+		}
+		calculateVtx();
 	}
 
 	void reduceHealth(int amount){
