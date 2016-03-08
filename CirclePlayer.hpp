@@ -2,43 +2,81 @@
 #define CIRCLEPLAYER_HPP
 
 #include "Circle.hpp"
+#include "Circumference.hpp"
 #include <SFML\Graphics.hpp>
+
+//#define DEBUG
 
 class CirclePlayer : public Circle{
 public:
-	Circle(sf::Vector2f pos){
-		this->pos = pos;
-		this->radius = 50;
-		this->inner = new sf::CircleShape(50 - 3);
-		sf::Color innerColor = sf::Color::Green;
-		innerColor.a *= 0.05;
-		this->inner->setFillColor(innerColor);
-		this->inner->setPosition(pos.x - 50 + 3, pos.y - 50 + 3);
-		this->degrees = 270;
-		this->color = color;
-		this->facing = 90;
-		this->vtx = new sf::VertexArray(sf::LinesStrip);
-		calculateVtx();
+	CirclePlayer(sf::Vector2f pos) : 
+		Circle(pos, 150, 270, 90, sf::Color::Green)
+	{
+		this->outterCirc = new Circumference(this->pos, this->radius + 3);
+		this->innerCirc = new Circumference(this->pos, this->radius - 3);
 	}
 
-	bool isPointinside(sf::Vector2i point){
-		if (point.x >= 0 && point.y >= 0){
-			float a = (point.x - pos.x) * (point.x - pos.x);
-			float b = (point.y - pos.y) * (point.y - pos.y);
-			return (a + b) < (radius*radius);
+	void reduceHealth(int amount){
+		this->degrees -= amount;
+		if (this->degrees < 0) this->degrees = 0;
+	}
+
+	void increaseHealth(int amount){
+		this->degrees += amount;
+		if (this->degrees > 360) this->degrees = 360;
+	}
+
+	bool isAlive(){
+		return this->degrees > 0;
+	}
+
+	bool isPointProtected(sf::Vector2i point){
+		sf::Vector2f pointAux(point.x, point.y);
+		if (this->outterCirc->isInside(pointAux)){
+			if (!this->innerCirc->isInside(pointAux)){
+				Circumference auxCir(pointAux, 4);
+				for (int i = 0; i < this->vtx->getVertexCount(); ++i){
+					sf::Vertex v = (*(this->vtx))[i];
+					if (auxCir.isInside(v.position)){
+						return true;
+					}
+				}
+				return false;
+			}
 		}
 		return false;
 	}
 
 	bool isPointVulnerable(sf::Vector2i point){
-		if (isPointInside(point)){
-
+		sf::Vector2f pointAux(point.x, point.y);
+		if (this->outterCirc->isInside(pointAux)){
+			if (!this->innerCirc->isInside(pointAux)){
+				Circumference auxCir(pointAux, 4);
+				for (int i = 0; i < this->vtx->getVertexCount(); ++i){
+					sf::Vertex v = (*(this->vtx))[i];
+					if (auxCir.isInside(v.position)){
+						return false;
+					}
+				}
+				return true;
+			}
 		}
 		return false;
 	}
 
+#ifdef DEBUG
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const{
+		target.draw(*this->vtx, states);
+		target.draw(*this->inner, states);
+		this->outterCirc->draw(&target);
+		this->innerCirc->draw(&target);
+	}
+
+#endif
 private:
-	int life;
+	Circumference* outterCirc;
+	Circumference* innerCirc;
 };
 
 #endif

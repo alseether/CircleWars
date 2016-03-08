@@ -90,7 +90,7 @@ public:
 		target.draw(*this->inner, states);
 	}
 
-private:
+protected:
 	void calculateVtx(){
 		int margin = 5;
 		this->vtx->clear();
@@ -109,7 +109,7 @@ private:
 		}
 	}
 
-private:
+protected:
 	sf::VertexArray* vtx;
 	sf::Color color;
 	sf::CircleShape* inner;

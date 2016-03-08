@@ -1,12 +1,14 @@
 #include "SFML\Graphics.hpp"
 #include "Circle.hpp"
-//#include <iostream>
+#include "CirclePlayer.hpp"
+
+#define DEBUG
 
 int main(){
 	float radio = 100;
 	sf::VideoMode videoMode = sf::VideoMode(800, 800);
 	sf::RenderWindow window(videoMode, "Circle Wars");
-	Circle prueba(sf::Vector2f(400, 400), radio, 200, 1, sf::Color::Green);
+	CirclePlayer prueba(sf::Vector2f(400, 400));
 	while (window.isOpen()){
 		window.clear();
 		sf::Event event;
@@ -17,11 +19,12 @@ int main(){
 				break;
 			case sf::Event::KeyPressed:
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-					prueba.rotateLeft(1);
+					prueba.rotateLeft(2);
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-					prueba.rotateRight(1);
+					prueba.rotateRight(2);
 				}
+				/*
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
 					prueba.setColor(sf::Color::Blue);
 				}
@@ -36,9 +39,29 @@ int main(){
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)){
 					prueba.setRadius(50);
+				}*/
+				break;
+			case sf::Event::MouseButtonPressed:
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+					prueba.setDegrees(270);
 				}
 				break;
 			}
+		}
+		sf::Vector2i puntero = sf::Mouse::getPosition(window);
+		if (prueba.isPointVulnerable(puntero)){
+			prueba.setColor(sf::Color::Red);
+			prueba.reduceHealth(1);
+		}
+		else if (prueba.isPointProtected(puntero)){
+			prueba.setColor(sf::Color::Yellow);
+			prueba.increaseHealth(1);
+		}
+		else{
+			prueba.setColor(sf::Color::Green);
+		}
+		if (!prueba.isAlive()){
+			prueba.setColor(sf::Color::Red);
 		}
 
 		window.draw(prueba);
