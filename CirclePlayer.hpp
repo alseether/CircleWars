@@ -30,7 +30,7 @@ public:
 		return this->degrees > 0;
 	}
 
-	bool isPointProtected(sf::Vector2i point){
+	bool isPointProtected(sf::Vector2f point){
 		sf::Vector2f pointAux(point.x, point.y);
 		if (this->outterCirc->isInside(pointAux)){
 			if (!this->innerCirc->isInside(pointAux)){
@@ -47,7 +47,7 @@ public:
 		return false;
 	}
 
-	bool isPointVulnerable(sf::Vector2i point){
+	bool isPointVulnerable(sf::Vector2f point){
 		sf::Vector2f pointAux(point.x, point.y);
 		if (this->outterCirc->isInside(pointAux)){
 			if (!this->innerCirc->isInside(pointAux)){

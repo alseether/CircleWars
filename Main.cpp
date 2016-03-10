@@ -10,6 +10,9 @@ int main(){
 	sf::VideoMode videoMode = sf::VideoMode(800, 800);
 	sf::RenderWindow window(videoMode, "Circle Wars");
 	GameEngine eng(sf::Vector2f(800, 800), 15);
+
+	sf::Clock clock;
+
 	while (window.isOpen()){
 		window.clear();
 		sf::Event event;
@@ -18,8 +21,13 @@ int main(){
 			case sf::Event::Closed:
 				window.close();
 				break;
+			case sf::Event::KeyPressed:
+				eng.keyPressed();
+				break;
 			}
 		}
+		sf::Time elapsed = clock.restart();
+		eng.update(elapsed);
 		window.draw(eng);
 		window.display();
 	}

@@ -4,6 +4,8 @@
 #include "SFML\Graphics.hpp"
 #include <iostream>
 
+//#define FACING
+
 class Circle : public sf::Drawable{
 public:
 	Circle(sf::Vector2f pos, int radius, int degrees, int facing, sf::Color color){
@@ -102,7 +104,11 @@ protected:
 			vertexPos.x = pos.x + (std::cos(actualDegree * 3.14159 / 180) * radius);
 			vertexPos.y = pos.y - (std::sin(actualDegree * 3.14159 / 180) * radius);
 			if (actualDegree >= (facing - margin) && actualDegree <= (facing + margin)){
+#ifdef FACING
 				this->vtx->append(sf::Vertex(vertexPos, sf::Color::White));
+#else
+				this->vtx->append(sf::Vertex(vertexPos, color));
+#endif
 			}
 			else
 				this->vtx->append(sf::Vertex(vertexPos, color));
